@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# Webaudio Csound Samples Example 
+
+Example showing how to load samples from a server and use Csound writeToFS() to be able to read and load the samples from a Csound project. 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

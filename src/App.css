@@ -17,3 +17,6 @@
   color: #61dafb;
 }
 
+a, a:visited {
+  color: orange;
+}
