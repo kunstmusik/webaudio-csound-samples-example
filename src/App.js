@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import csd from "!raw-loader!!./sample_instrument.csd";
-import CsoundObj from "@kunstmusik/csound";
+import { Csound } from "@csound/browser";
 
 async function loadResources(csound, filesArray, dirToSave) {
     for (let i = 0; i < filesArray.length; i++) {
@@ -14,8 +14,9 @@ async function loadResources(csound, filesArray, dirToSave) {
         // const path = `/${dirToSave}/${fName}`;
         const path = `${fName}`;
         const buffer = await f.arrayBuffer();
+
         // console.log(path, buffer);
-        await csound.writeToFS(path, buffer);
+        csound.fs.writeFileSync(path, new Uint8Array(buffer));
     }
     return true;
 }
@@ -25,15 +26,14 @@ function App() {
     const [started, setStarted] = useState(false);
     useEffect(() => {
         if (csound == null) {
-            CsoundObj.initialize().then(() => {
-                const cs = new CsoundObj();
+            Csound().then(cs => {
                 setCsound(cs);
-            });
+            });	            
         }
     }, [csound]);
 
     const startCsound = async () => {
-        csound.setOption("-+msg_color=false");
+        await csound.setOption("-+msg_color=false");
 
         const resources = [
             "SynthStrings1-WAV-20160913/SynthStrings1-30.wav",
@@ -52,9 +52,9 @@ function App() {
 
         await loadResources(csound, resources, "SynthStrings1-WAV-20160913");
 
-        csound.compileCSD(csd);
+        csound.compileCsdText(csd);
         csound.start();
-        csound.audioContext.resume();
+        csound.getAudioContext().then(ctx => ctx.resume());
         setStarted(true);
     };
     return (
